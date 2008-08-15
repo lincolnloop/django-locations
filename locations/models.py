@@ -14,7 +14,7 @@ class Country(models.Model):
     alpha3 = models.CharField('ISO alpha-3', max_length=3, unique=True)
     numeric = models.PositiveSmallIntegerField('ISO numeric', unique=True)
     name = models.CharField(max_length=128)
-    official_name = models.CharField(max_length=128)
+    official_name = models.CharField(max_length=128, blank=True)
     published = models.BooleanField(default=True, db_index=True)
     objects = models.Manager()
     active = CountryManager()
@@ -37,46 +37,48 @@ class Country(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
-class SubDivisionType(models.Model):
-    """SubDivision Types (State, Province, etc.)"""
+class SubdivisionType(models.Model):
+    """Subdivision Types (State, Province, etc.)"""
     name = models.CharField(max_length=100)
 
     class Admin:
         pass
+    
+    class Meta:
+        ordering = ['name',]
 
     def __unicode__(self):
         return self.name
 
 
-class SubDivision(models.Model):
+class Subdivision(models.Model):
     code = models.CharField(max_length=3)
     name = models.CharField(max_length=55)
     country = models.ForeignKey(Country)
-    sub_division_type = models.ForeignKey(SubDivisionType)
-    parent = models.ForeignKey("SubDivision", blank=True, null=True)
+    subdivision_type = models.ForeignKey(SubdivisionType)
+    parent = models.ForeignKey("Subdivision", blank=True, null=True)
 
     def __unicode__(self):
-        return self.name
+        return '%s %s' % (self.name, self.country.name)
 
     class Admin:
-        pass
+        list_display = ('name', 'subdivision_type', 'code', 'country',)
+        list_filter = ('country',)
 
     class Meta:
-        verbose_name = "State/Province"
+        ordering = ['name',]
         
 
 class Location(models.Model):
     slug = models.SlugField(prepopulate_from=("city",))
     city = models.CharField(max_length=50)
-    sub_division = models.ForeignKey(SubDivision, name="State/Province")
-    country = models.ForeignKey(Country)
+    subdivision = models.ForeignKey(Subdivision)
 
     def __unicode__(self):
-        return "%s, %s %s" % (self.city, self.state_province,
-                              str(self.country))
+        return "%s, %s" % (self.city, self.subdivision)
 
     class Meta:
-        unique_together = ("city", "sub_division", "country")
+        unique_together = ("city", "subdivision")
         
     class Admin:
         pass

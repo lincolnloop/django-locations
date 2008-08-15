@@ -1,20 +1,20 @@
 import pycountry
 
-from locations.models import Country, SubDivision, SubDivisionType
+from locations.models import Country, Subdivision, SubdivisionType
 
 def create_subdivision(subdivision, country):
     """
-    Recursively create Django SubDivision objects
+    Recursively create Django Subdivision objects
     
     Note:
     subdivision is a pycountry object
     country is a Django object
     """
-    t, created = SubDivisionType.objects.get_or_create(name=subdivision.type)
-    sd, created = SubDivision.objects.get_or_create(code=subdivision.code,
+    t, created = SubdivisionType.objects.get_or_create(name=subdivision.type)
+    sd, created = Subdivision.objects.get_or_create(code=subdivision.code,
                                                     country=country,
                                                     name=subdivision.name,
-                                                    sub_division_type=t)
+                                                    subdivision_type=t)
     if subdivision.parent_code:
         parent = subdivision.parent
         p = create_subdivision(parent, country)
