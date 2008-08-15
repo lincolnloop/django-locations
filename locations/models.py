@@ -35,7 +35,7 @@ class Country(models.Model):
         ordering = ('name', )
 
     def __unicode__(self):
-        return unicode(self.display_name)
+        return unicode(self.name)
 
 class SubDivisionType(models.Model):
     """SubDivision Types (State, Province, etc.)"""
