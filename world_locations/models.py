@@ -58,7 +58,7 @@ class SubdivisionType(models.Model):
 
 class Subdivision(models.Model):
     slug = models.SlugField()
-    code = models.CharField(max_length=3, blank=True, null=True)
+    code = models.CharField(max_length=20, blank=True, null=True)
     name = models.CharField(max_length=55)
     country = models.ForeignKey(Country)
     subdivision_type = models.ForeignKey(SubdivisionType, blank=True, null=True)

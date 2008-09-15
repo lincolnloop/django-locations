@@ -22,6 +22,12 @@ def unique_slugify(instance, value, slug_field_name='slug', queryset=None):
 
     # Sort out the initial slug. Chop its length down if we need to.
     slug = slugify(value)
+    if slug_len:
+        slug = slug[:slug_len]
+    slug = RE_SLUG_STRIP.sub('', slug)
+    original_slug = slug
+
+    # Create a queryset, excluding the current instance.
     if not queryset:
         queryset = instance.__class__._default_manager.all()
         if instance.pk:
@@ -39,8 +45,8 @@ def unique_slugify(instance, value, slug_field_name='slug', queryset=None):
         slug = '%s%s' % (slug, end)
         next += 1
 
-    setattr(instance, slug_field.attname, slug)
-    
+    setattr(instance, slug_field.attname, slug)   
+ 
 def reverse_lookup(point):  
     """
     Lookup point at geonames
